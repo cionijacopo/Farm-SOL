@@ -1,4 +1,4 @@
-# FarmProject-SOL
+# FarmProject.v2-SOL
 </br>
 Progetto di laboratorio di Sistemi Operativi - A.A. 2022/2023
 </br>
