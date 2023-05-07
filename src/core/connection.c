@@ -14,6 +14,7 @@
 #include<sys/socket.h>
 
 struct sockaddr_un socket_address;
+socklen_t address_length;
 
 void initServerAddress() {
     memset(&socket_address, '0', sizeof(socket_address));
@@ -69,6 +70,12 @@ int clientSocket() {
         }
     }
     // Ho il file descriptor del client socket
+    return fd_client;
+}
+
+int accettaClient(int fd_socket) {
+    int fd_client;
+    fd_client = accept(fd_socket, (struct sockaddr *)&socket_address, &address_length);
     return fd_client;
 }
 

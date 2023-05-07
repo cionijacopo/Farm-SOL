@@ -33,6 +33,14 @@ int serverSocket();
 int clientSocket();
 
 /**
+ * @function accettaClient
+ * @brief funzione accept
+ * @param fd_socket server
+ * @return fd_client file descriptor del client
+*/
+int accettaClient(int fd_socket);
+
+/**
  * @function readn
  * @brief funzione di lettura di un buffer di dimensione size, evita letture parziali
  * @param fd file descriptor 
