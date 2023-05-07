@@ -13,6 +13,8 @@
 #include"../includes/utils.h"
 #include"../includes/linkedlist.h"
 #include"../includes/isregular.h"
+#include"../includes/farm_collector.h"
+#include"../includes/farm_master_worker.h"
 
 
 int main (int argc, char *argv[]) {
