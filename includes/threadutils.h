@@ -3,6 +3,19 @@
 
 #include<pthread.h>
 #include<stdio.h>
+#include<stdlib.h>
+
+/**
+ * @function createThread
+ * @brief crea il thread in modo safe
+*/
+static inline void createThread(pthread_t *id, const pthread_attr_t *attr, void* (*function) (void *), void *args) {
+    int err;
+    if((err = pthread_create(id, attr, function, args)) != 0) {
+        perror("Thread create");
+        exit(EXIT_FAILURE);
+    }
+}
 
 #define WRITE_ERROR(S) {                                    \
     fprintf(stderr, S);                                     \
