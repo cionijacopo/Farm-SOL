@@ -25,7 +25,15 @@ typedef struct taskqueue {
     // Tempo di attesa tra due richieste successive
     int r_time;
     // Possibile variabile di uscia
-    
+
 } TaskQueue_t;
+
+/**
+ * @function initQueue
+ * @brief inizializza la coda dei task
+ * @param safe_queue coda da inizializzare
+ * @return 0 in caso di successo, -1 altrimenti
+*/
+int initQueue(TaskQueue_t *safe_queue, int max_length, int r_time);
 
 #endif
