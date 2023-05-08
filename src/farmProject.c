@@ -144,7 +144,7 @@ int main (int argc, char *argv[]) {
             fprintf(stderr, "Errore: argomento formato da troppi caratteri. Ignorato.\n");
         } else {
             if (is_regular_file(argv[i]) == 0) {
-                postInsert(lista, argv[i]);
+                lista = postInsert(lista, argv[i]);
             } else {
                 fprintf(stderr, "Errore: File non regolare/stat fallita. Ignorato.\n");
             }
