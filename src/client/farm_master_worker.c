@@ -68,6 +68,9 @@ int farm_master(int num_thread, int q_length, int r_time, Node_t *lista) {
     // Libero tutta la memoria
     deleteList(lista);
     free(safe_queue->coda);
+    pthread_mutex_destroy(&safe_queue->qlock);
+    pthread_cond_destroy(&safe_queue->pieno);
+    pthread_cond_destroy(&safe_queue->vuoto);
     free(safe_queue);
 
     return 0;
