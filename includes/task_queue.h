@@ -25,7 +25,7 @@ typedef struct taskqueue {
     // Tempo di attesa tra due richieste successive
     int r_time;
     // Possibile variabile di uscia
-
+    int uscita;
 } TaskQueue_t;
 
 /**
