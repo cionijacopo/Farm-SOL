@@ -3,16 +3,9 @@
 
 #include<pthread.h>
 
-typedef struct task {
-    // Informazione
-    char *info; 
-    // Puntatore al prossimo nodo
-    struct task *next;
-} Task_t;
-
 typedef struct taskqueue {
-    // Coda concorrente
-    Task_t *coda;
+    // Coda concorrente - riferimento alla testa
+    char **coda;
     // Lunghezza MAX coda
     int max_length;
     // Posizione
@@ -24,7 +17,7 @@ typedef struct taskqueue {
     pthread_cond_t vuoto;
     // Tempo di attesa tra due richieste successive
     int r_time;
-    // Possibile variabile di uscia
+    // Possibile variabile di uscita: -1 -> ok ; 0 -> esco
     int uscita;
 } TaskQueue_t;
 
@@ -34,38 +27,23 @@ typedef struct taskqueue {
  * @param safe_queue coda da inizializzare
  * @return 0 in caso di successo, -1 altrimenti
 */
-int initQueue(TaskQueue_t *safe_queue, int max_length, int r_time);
+TaskQueue_t *initQueue(int max_length, int r_time);
 
 /**
- * @function newNodePool
- * @brief permette la creazione di un nodo della coda
- * @param info informazione da inserire nel nodo
- * @return nodo creato
-*/
-Task_t *newNodePool(char *info);
-
-/**
- * @function postInsertPool
+ * @function pushPool
  * @brief permette l'inserimento di un nodo nella coda del pool
- * @param lista lista dove inserire un nodo
+ * @param lista pool dove inserire un nodo
  * @param info informazione da inserire nella lista
- * @return puntatore alla lista con nuovo nodo
+ * @return 0 in caso di succeso, -1 in caso di errore (errno settato)
 */
-Task_t *postInsertPool(Task_t *lista, char *info);
+int pushPool(TaskQueue_t *lista, char *info);
 
 /**
- * @function removePoolTask
- * @brief permette la rimozione di un nodo dalla coda del pool
- * @param lista lista da dove viene rimosso il nodo
- * @return valore rimosso
+ * @function popPool
+ * @brief estrae un dato dalla coda
+ * @param lista coda da cui estrarre l'elemento
+ * @return puntatore al dato estratto (errno settato)
 */
-char *removePoolTask(Task_t **lista);
-
-/**
- * @function printPoolList
- * @brief permette la stampa della coda della pool
- * @param lista da stampare
-*/
-void printPoolList(Task_t *lista);
+char *popPool(TaskQueue_t *lista);
 
 #endif
