@@ -24,7 +24,7 @@ static inline void createThread(pthread_t *id, const pthread_attr_t *attr, void*
 
 #define WRITE_THREAD_ERROR(S) {                             \
     fprintf(stderr, S);                                     \
-    pthread_exit((void ) EXIT_FAILURE);                     \
+    pthread_exit((void *)EXIT_FAILURE);                     \
 }
 
 #define LOCK(l)                                             \
@@ -52,11 +52,11 @@ static inline void createThread(pthread_t *id, const pthread_attr_t *attr, void*
         WRITE_ERROR("ERRORE FATALE join\n");                \
     }
 
-#define BCAST(c)                                            \
-    if (pthread_cond_broadcast(c) != 0)                     \
-    {                                                       \
-        fprintf(stderr, "ERRORE FATALE broadcast\n");       \
-        pthread_exit((void)EXIT_FAILURE);                   \
+#define BCAST(c)                                                \
+    if (pthread_cond_broadcast(c) != 0)                         \
+    {                                                           \
+        fprintf(stderr, "ERRORE FATALE broadcast\n");           \
+        pthread_exit((void *)EXIT_FAILURE);                     \
     }
 
 #endif
