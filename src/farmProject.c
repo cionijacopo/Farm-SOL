@@ -4,18 +4,86 @@
 */
 
 #define _GNU_SOURCE
+#define _POSIX_C_SOURCE 200112L
 #include <stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<signal.h>
 #include<unistd.h>
+#include<errno.h>
+#include<sys/types.h>
+#include<sys/wait.h>
 
 #include"../includes/utils.h"
 #include"../includes/linkedlist.h"
 #include"../includes/isregular.h"
 #include"../includes/farm_collector.h"
 #include"../includes/farm_master_worker.h"
+#include"../includes/threadutils.h"
+#include"../includes/connection.h"
 
+volatile sig_atomic_t force = 0;
+
+static void interrupt(int signum) {
+    force = 1;
+}
+
+// Funzione eseguita dal signalhandler thread
+static void *sigHandler(void *args) {
+    // Passo il set di segnali che si trova nell'argomento
+    sigset_t *set = (sigset_t *)args;
+    int sig;
+
+    // Uso la sigwait per attendere i segnali, NOTA: Devono essere mascherati
+    for(;;) {
+        int r = sigwait(set, &sig);
+        if(r != 0) {
+            errno = r;
+            perror("sigwait");
+            return NULL;
+        }
+        // Faccio lo switch su sig
+        switch(sig) {
+            case SIGUSR1: {
+                int fd_farm = clientSocket();
+                int length = 6;
+                int n;
+                if((n = writen(fd_farm, &length, sizeof(int))) == -1) {
+                    fprintf(stderr, "Errore writen master.\n");
+                    return NULL;
+                }
+                if((n = writen(fd_farm, "SIGNAL", length*sizeof(char))) == -1) {
+                    fprintf(stderr, "Errore writen master.\n");
+                    return NULL;
+                }
+                close(fd_farm);
+                continue;
+            }
+            case SIGINT: {
+                fprintf(stdout, "Ricevuto SIGINT.\n");
+                interrupt(sig);
+                continue;
+            }
+            case SIGTERM: {
+                fprintf(stdout, "Ricevuto SIGTERM.\n");
+                interrupt(sig);
+                continue;
+            }
+            case SIGQUIT: {
+                fprintf(stdout, "Ricevuto SIGQUIT.\n");
+                interrupt(sig);
+                continue;
+            }
+            case SIGHUP: {
+                fprintf(stdout, "Ricevuto SIGHUP.\n");
+                interrupt(sig);
+                continue;
+            }
+            default: ;
+        }
+    }
+    return NULL;
+}
 
 int main (int argc, char *argv[]) {
 
@@ -30,6 +98,36 @@ int main (int argc, char *argv[]) {
     
     int opt;
     int n_counter = 0, q_counter = 0, d_counter = 0, t_counter = 0;
+
+    // Gestione dei segnali, come visto ad esercitazione
+    // Setto la maschera per i segnali che mi interessano
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGINT);
+    sigaddset(&mask, SIGQUIT);
+    sigaddset(&mask, SIGTERM);
+    sigaddset(&mask, SIGHUP);
+    sigaddset(&mask, SIGUSR1);
+
+    // Registro la maschera e blocco
+    if(pthread_sigmask(SIG_BLOCK, &mask, NULL) != 0) {
+        fprintf(stderr, "FATAL ERROR: signal.\n");
+        exit(EXIT_FAILURE);
+    }
+    // Ignoro SIGPIPE per evitare di essere terminato da una scrittura su un socket.
+    struct sigaction s;
+    memset(&s, 0, sizeof(s));
+    s.sa_handler = SIG_IGN;
+    // Passo all'handler che ignorerà SIGPIPE
+    if(sigaction(SIGPIPE, &s, NULL) == -1) {
+        perror("sigaction sigpipe");
+        exit(EXIT_FAILURE);
+    }
+
+    // Creo il thread per la gestione dei segnali
+    pthread_t signalhandler_thread;
+    createThread(&signalhandler_thread, NULL, sigHandler, &mask);
+
 
     // I due punti dopo l'option dicono al getopt che ci sono argomenti
     while ((opt = getopt(argc, argv, ":n:q:t:d:")) != -1) {
@@ -185,6 +283,14 @@ int main (int argc, char *argv[]) {
             fprintf(stderr, "FATAL ERROR: processo master.\n");
             exit(EXIT_FAILURE);
         }
+        if(waitpid(pid, NULL, 0) == -1) {
+            perror("waitpid");
+            exit(EXIT_FAILURE);
+        }
+        // dopo che la cancellazione di un thread è terminata, la join ottiene PTHREAD_CANCELED
+        // Fare la join è l'unico modo per sapere se la cancellazione è terminata.
+        pthread_cancel(signalhandler_thread);
+        JOIN(signalhandler_thread);
     } else {
         perror("fork");
         exit(EXIT_FAILURE);
