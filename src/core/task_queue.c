@@ -13,6 +13,8 @@
 #include<errno.h>
 #include<pthread.h>
 
+extern volatile __sig_atomic_t force;
+
 TaskQueue_t *initQueue(int max_length, int r_time) {
     TaskQueue_t *safe_queue = (TaskQueue_t *)s_malloc(sizeof(TaskQueue_t));
     if(!safe_queue) {
@@ -55,7 +57,11 @@ int pushPool(TaskQueue_t *lista, char *info) {
     LOCK(&lista->qlock);
 
     // Devo gestire i segnali, nel caso di una interrupt devo uscire
-
+    if(force == 1) {
+        lista->uscita++;
+        UNLOCK(&lista->qlock);
+        return 0;
+    }
 
     // Controllo la condizione di attesa e verifico che la coda non sia piena
     while(lista->pos >= lista->max_length) {
