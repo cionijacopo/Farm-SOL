@@ -39,6 +39,10 @@ static int handler(int fd_client, int *termina, FinalNode_t *final_list) {
         close(fd_client);
         (*termina) = 1;
         return 0;
+    } else if(strncmp(collector_buffer, "SIGNAL", length) == 0) {
+        close(fd_client);
+        printFinalList(final_list);
+        return 0;
     } else {
         // Aggiungo alla lista finale
         // Faccio prima la tokenizer rientrante
