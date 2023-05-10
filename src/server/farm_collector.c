@@ -11,8 +11,11 @@
 #include<stdio.h>
 #include<errno.h>
 #include<unistd.h>
+#include<stdlib.h>
 
-static int handler(int fd_client, int *termina) {
+#define _POSIX_C_SOURCE 200112L
+
+static int handler(int fd_client, int *termina, FinalNode_t *final_list) {
     //Gestione del client, da completare
     char *collector_buffer = NULL;
     int length;
@@ -20,10 +23,12 @@ static int handler(int fd_client, int *termina) {
     // Leggo prima la lunghezza del messaggio
     if((n = readn(fd_client, &length, sizeof(int))) == -1) {
         fprintf(stderr, "FATAL ERROR: readn collector.\n");
+        close(fd_client);
         return -1;
     }
     if((n = readn(fd_client, collector_buffer, length)) == -1) {
         fprintf(stderr, "FATAL ERROR: readn collector.\n");
+        close(fd_client);
         return -1;
     }
 
@@ -35,10 +40,21 @@ static int handler(int fd_client, int *termina) {
         (*termina) = 1;
         return 0;
     } else {
+        // Aggiungo alla lista finale
+        // Faccio prima la tokenizer rientrante
+        char *stato;
+        long int ris;
+        char *token = strtok_r(collector_buffer, "-", &stato);
+        ris = strtol(token, NULL, 10);
+        token = strtok_r(NULL, "-", &stato);
+        // Aggiungo il nodo
+        final_list = insertFinalNode(final_list, token, ris);
+        if(final_list == NULL) {
+            fprintf(stderr, "Errore inserimento nodo finale.\n");
+            close(fd_client);
+            return -1;
+        }
         close(fd_client);
-        // Qui devo gestire il client, per ora mi limito a stampare
-        fprintf(stdout, "%s\n", collector_buffer);
-
         return 0;
     }
 }
@@ -46,6 +62,7 @@ static int handler(int fd_client, int *termina) {
 int farm_collector() {
     int fd_socket;
     int termina = 0;
+    FinalNode_t *final_list = NULL;
     // Pulizia
     cleanup();
     //Inizializzazione dell'indirizzo
@@ -70,14 +87,20 @@ int farm_collector() {
                 return -1;
             }
         } else {
-            if(handler(fd_client, &termina) == -1) {
+            if(handler(fd_client, &termina, final_list) == -1) {
                 return -1;
             }
         }
     }
 
     // Terminazione
-    fprintf(stdout, "Terminazione collector.\n");
-    cleanup();
-    return 0;
+    //fprintf(stdout, "Terminazione collector.\n");
+    printFinalList(final_list);
+    if(deleteFinalList(final_list) == NULL) {
+        cleanup();
+        return -1;
+    } else {
+        cleanup();
+        return 0;
+    } 
 }
