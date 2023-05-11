@@ -72,6 +72,7 @@ Node_t *deleteList(Node_t *lista) {
     } else {
         return NULL;
     }
+    return NULL;
 }
 
 FinalNode_t *deleteFinalList(FinalNode_t *final_list) {
@@ -82,6 +83,7 @@ FinalNode_t *deleteFinalList(FinalNode_t *final_list) {
     } else {
         return NULL;
     }
+    return NULL;
 }
 
 void printFinalList(FinalNode_t *final_list) {

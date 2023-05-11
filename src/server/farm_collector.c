@@ -45,12 +45,12 @@ static int handler(int fd_client, int *termina, FinalNode_t *final_list) {
         return 0;
     } else {
         // Aggiungo alla lista finale
-        // Faccio prima la tokenizer rientrante
-        char *stato;
+        // Faccio prima la tokenizer 
+        char *nome;
         long int ris;
-        char *token = strtok_r(collector_buffer, "-", &stato);
+        char *token = strtok(collector_buffer, "-");
         ris = strtol(token, NULL, 10);
-        token = strtok_r(NULL, "-", &stato);
+        token = strtok(NULL, "-");
         // Aggiungo il nodo
         final_list = insertFinalNode(final_list, token, ris);
         if(final_list == NULL) {

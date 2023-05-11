@@ -19,7 +19,7 @@ static long workerResult(char *info) {
     unsigned char buf[8];
 
     //File binario in apertura
-    file = fopen(file, "rb");
+    file = fopen(info, "rb");
     if(file == NULL) {
         fprintf(stderr, "Errore nell'apertura del file.\n");
     }
