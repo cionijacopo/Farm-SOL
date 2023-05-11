@@ -86,6 +86,13 @@ FinalNode_t *deleteFinalList(FinalNode_t *final_list) {
     return NULL;
 }
 
+void printList(Node_t *lista) {
+    if(lista != NULL) {
+        fprintf(stdout, "%s\n", lista->info);
+        printList(lista->next);
+    }
+}
+
 void printFinalList(FinalNode_t *final_list) {
     if(final_list != NULL) {
         fprintf(stdout, "%ld %s\n", final_list->ris, final_list->info);

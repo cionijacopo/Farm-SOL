@@ -69,6 +69,8 @@ Node_t *deleteList(Node_t *lista);
 */
 FinalNode_t *deleteFinalList(FinalNode_t *final_list);
 
+void printList(Node_t *lista);
+
 /**
  * @function printFinalList
  * @brief funzione che stampa la lista

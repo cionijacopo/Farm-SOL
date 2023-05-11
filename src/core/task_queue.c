@@ -75,12 +75,15 @@ int pushPool(TaskQueue_t *lista, char *info) {
     }
     // Copio infio
     strncpy(lista->coda[lista->pos], info, strlen(info)+1);
+    // TEST: --> OK
+    // printf("Dato inserito: %s\n", lista->coda[lista->pos]);  
     lista->pos++;
 
-    // Invio un segnale sulla condizione
-    SIGNAL(&lista->vuoto);
     //Rilascio la lock
     UNLOCK(&lista->qlock);
+    // Invio un segnale sulla condizione
+    SIGNAL(&lista->vuoto);
+
     return 0;
 }
 
@@ -90,14 +93,31 @@ char *popPool(TaskQueue_t *lista) {
         perror("popPool");
         return NULL;
     }
-    // Puntatore al dato estratto
+    // TEST: --> OK
+    //printf("Test.\n"); 
+    //printTaskQueue(lista);
+    //printf("Posizione: %d\n", lista->pos);
+    // printf("Test: %s\n", lista->coda[lista->pos]); 
+    // Puntatore al dato estratto 
     char *info;
     // Rimuovo l'elemento
-    info = lista->coda[lista->pos];
+    info = lista->coda[lista->pos - 1];
+    //  printf("Dato pre-Estratto: %s\n", lista->coda[lista->pos]);
     lista->coda[lista->pos] = NULL;
     lista->pos--;
 
     return info;
+} 
+ 
+void printTaskQueue(TaskQueue_t *lista) {
+    if(lista == NULL) {
+        printf("VUOTA.\n");
+    } else {
+        int i;
+        for(i=0;i<lista->pos;i++) {
+            printf("%s \n", lista->coda[i]);
+        }
+    }
 }
 
 

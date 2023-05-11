@@ -25,7 +25,7 @@ typedef struct taskqueue {
  * @function initQueue
  * @brief inizializza la coda dei task
  * @param safe_queue coda da inizializzare
- * @return 0 in caso di successo, -1 altrimenti
+ * @return 0 in caso di successo, -1 altrimenti 
 */
 TaskQueue_t *initQueue(int max_length, int r_time);
 
@@ -45,5 +45,7 @@ int pushPool(TaskQueue_t *lista, char *info);
  * @return puntatore al dato estratto (errno settato)
 */
 char *popPool(TaskQueue_t *lista);
+
+void printTaskQueue(TaskQueue_t *lista);
 
 #endif

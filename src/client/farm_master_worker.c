@@ -22,6 +22,10 @@ int farm_master(int num_thread, int q_length, int r_time, Node_t *lista) {
         deleteList(lista);
         return -1;
     }
+
+    // TEST: --> OK
+    // printf("TEST.\n");
+    // printList(lista);
     
     // Poi creo la pool di threads
     pthread_t pool[num_thread];
@@ -36,6 +40,7 @@ int farm_master(int num_thread, int q_length, int r_time, Node_t *lista) {
             fprintf(stderr, "FATAL ERROR: inserimento elementi nella pool.\n");
             return -1;
         }
+        // printTaskQueue(safe_queue);
         // Scorro la lista di file regolari
         lista = lista->next;
     }

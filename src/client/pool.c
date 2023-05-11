@@ -34,11 +34,15 @@ static long workerResult(char *info) {
 }
 
 // Consumatore della coda concorrente
-void *workerFun(void *coda) {
-    TaskQueue_t *safe_queue = (TaskQueue_t *)coda;
+void *workerFun(void *args) {
+    TaskQueue_t *safe_queue = (TaskQueue_t *)args;
     int fd_client;
     long int ris;
     char *info;
+
+    // TEST: --> OK
+    // printf("Test di prova\n"); 
+    // printTaskQueue(safe_queue); 
 
     // Ciclo infinito
     for(;;) {
@@ -59,16 +63,21 @@ void *workerFun(void *coda) {
             UNLOCK(&safe_queue->qlock);
             return (void *)0;
         }
-
+        // TEST: --> OK
+        // printf("Test di prova\n"); 
+        // printTaskQueue(safe_queue);  
+        
         // La wait riprende la lock quando la condizione è verificata
         info = popPool(safe_queue);
-        // Dopo aver estratto invio il segnale
-        SIGNAL(&safe_queue->pieno);
+        printf("Dato estratto: %s \n", info);
+        // Dopo aver estratto invio il segnale 
+        SIGNAL(&safe_queue->pieno); 
         // Rilascio la lock
         UNLOCK(&safe_queue->qlock);
 
         // Lo worker procede con il calcolo del risultato
         ris = workerResult(info);
+        printf("Risultato: %ld \n", ris); 
         // Cerco il numero di cifre in modo da allocare esattamente lo spazio necessario
         int cifre = 0;
         long int temp = ris;

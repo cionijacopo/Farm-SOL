@@ -241,6 +241,7 @@ int main (int argc, char *argv[]) {
         if((strlen(argv[i])+1) > MAX_ARGV_LENGTH) {
             fprintf(stderr, "Errore: argomento formato da troppi caratteri. Ignorato.\n");
         } else {
+            // printf("Test.\n");
             if (is_regular_file(argv[i]) == 0) {
                 lista = postInsert(lista, argv[i]);
             } else {
@@ -249,6 +250,9 @@ int main (int argc, char *argv[]) {
         }
         i++;
     }
+
+    // TEST: --> OK
+    // printList(lista);
 
     /*
         Debug argomenti:
@@ -264,6 +268,14 @@ int main (int argc, char *argv[]) {
             fprintf(stderr, "Errore: cartella non regolare. Ignorato.\n");
         }
     }
+
+        // TEST: --> OK
+        // printf("-n: %ld, -q: %ld, -t: %ld, -d: %s", num_threads, q_length, r_time, dir_name);
+        // printf("\n");
+        // printList(lista);
+
+        // printf("FINE TEST.\n");
+    
     
     pid_t pid = fork();
     // Controllo se sono padre, figlio o se c'è stato un errore
@@ -296,6 +308,6 @@ int main (int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-
+    
     return 0;
 }

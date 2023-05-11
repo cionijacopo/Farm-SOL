@@ -16,6 +16,8 @@
 #include<sys/types.h>
 #include<unistd.h>
 
+#define MAX_PATH_LENGTH 4096
+
 int is_regular_file(char *file) {
     struct stat pathbuf;
     if(stat(file, &pathbuf) != 0) {
@@ -34,6 +36,7 @@ int is_regular_folder(char *folder_name) {
     struct stat pathbuf_f;
     if(stat(folder_name, &pathbuf_f) != 0) {
         // Errore stat
+        perror("stat");
         return -1;
     }
     // Se ritorna zero non è un file
@@ -51,7 +54,7 @@ void naviga_cartella(char *folder_name, Node_t *lista) {
         fprintf(stderr, "FATAL ERROR: navigazione della directory.\n");
         exit(EXIT_FAILURE);
     } else {
-        char *sub_cartella = NULL;
+        char sub_cartella[MAX_PATH_LENGTH];
         errno = 0;
         struct dirent *file;
         // Comincio ad iterare
@@ -60,7 +63,6 @@ void naviga_cartella(char *folder_name, Node_t *lista) {
             if(strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0) {
                 continue;
             } else {
-                sub_cartella = (char *)s_malloc(strlen(file->d_name)+1);
                 strncpy(sub_cartella, folder_name, strlen(folder_name)+1);
                 strncat(sub_cartella, "/", 2);
                 strncat(sub_cartella, file->d_name, strlen(file->d_name)+1);

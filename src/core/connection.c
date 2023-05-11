@@ -59,8 +59,10 @@ int clientSocket() {
         perror("SOCKET");
         return -1;
     }
+    // TEST: --> OK
+    // printf("Fd_client: %d\n", fd_client);  
     // Ritento la connessione più volte
-    while(connect(fd_client, (struct sockaddr*)&socket_address, sizeof(socket_address)) == -1) {
+    while(connect(fd_client, (struct sockaddr*)&socket_address, sizeof(struct sockaddr_un)) == -1) {
         if(errno == ENOENT) {
             // riprovo
             sleep(1);
