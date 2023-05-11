@@ -51,8 +51,9 @@ static int handler(int fd_client, int *termina, FinalNode_t *final_list) {
         char *token = strtok(collector_buffer, "-");
         ris = strtol(token, NULL, 10);
         token = strtok(NULL, "-");
+        nome = token;
         // Aggiungo il nodo
-        final_list = insertFinalNode(final_list, token, ris);
+        final_list = insertFinalNode(final_list, nome, ris);
         if(final_list == NULL) {
             fprintf(stderr, "Errore inserimento nodo finale.\n");
             close(fd_client);
