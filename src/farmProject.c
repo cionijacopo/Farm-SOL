@@ -1,10 +1,12 @@
 /*
     Created by Jacopo Cioni
     FarmProject - SOL
+    File sorgente di partenza.
 */
 
 #define _GNU_SOURCE
 #define _POSIX_C_SOURCE 200112L
+
 #include <stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -17,7 +19,6 @@
 #include<sys/un.h>
 
 #include"../includes/utils.h"
-#include"../includes/linkedlist.h"
 #include"../includes/isregular.h"
 #include"../includes/farm_collector.h"
 #include"../includes/farm_master_worker.h"
@@ -141,8 +142,8 @@ int main (int argc, char *argv[]) {
                 } else {
                     // Controllo che optarg sia un valore, in caso contrario non viene modificato num_threads e alla fine prenderà il valore di default.
                     if(isNumber(optarg, &num_threads) != 0) {
-                        fprintf(stderr, "L'argomento di '-n' non è valido.\n");
-                        fprintf(stderr, "Utilizzo valori di default per '-n'.\n");
+                        // fprintf(stderr, "L'argomento di '-n' non è valido.\n");
+                        // fprintf(stderr, "Utilizzo valori di default per '-n'.\n");
                         // Valore di default per num_threads
                         num_threads = DEFAULT_NUM_THREADS;
                     }
@@ -175,8 +176,8 @@ int main (int argc, char *argv[]) {
                 } else {
                     // Controllo che optarg sia un valore, in caso contrario non viene modificato r_time e alla fine prenderà il valore di default.
                     if(isNumber(optarg, &r_time) != 0) {
-                        fprintf(stderr, "L'argomento di '-t' non è valido.\n");
-                        fprintf(stderr, "Utilizzo valori di default per '-t'.\n");
+                        // fprintf(stderr, "L'argomento di '-t' non è valido.\n");
+                        // fprintf(stderr, "Utilizzo valori di default per '-t'.\n");
                         // Valore di default per r_time
                         r_time = DEFAULT_DELAY_TIME;
                     }
@@ -191,8 +192,8 @@ int main (int argc, char *argv[]) {
                     exit(EXIT_FAILURE);
                 } else {
                     if(strlen(optarg) > MAX_ARGV_LENGTH) {
-                        fprintf(stderr, "L'argomento di '-d' contiene troppi caratteri.\n");
-                        fprintf(stderr, "Utilizzo valori di default per '-d'.\n");
+                        // fprintf(stderr, "L'argomento di '-d' contiene troppi caratteri.\n");
+                        // fprintf(stderr, "Utilizzo valori di default per '-d'.\n");
                         // Valore di default per dir_name
                         dir_name = NULL;
                     } else {
@@ -230,54 +231,8 @@ int main (int argc, char *argv[]) {
         // fprintf(stdout, "Utilizzo valore di default per '-d'.\n");
     }
 
-    // Gestione della lista degli argomenti
-    Node_t *lista = NULL;
-    // Comincio a scorrere gli argomenti non riconosciuti da getopt
-    // Il primo valore servirà a creare la lista
-    // I successivi valori verranno inseriti alla fine della lista
-
-    int i = optind;
-    while(i<argc) {
-        if((strlen(argv[i])+1) > MAX_ARGV_LENGTH) {
-            fprintf(stderr, "Errore: argomento formato da troppi caratteri. Ignorato.\n");
-        } else {
-            // printf("Test.\n");
-            if (is_regular_file(argv[i]) == 0) {
-                lista = postInsert(lista, argv[i]);
-            } else {
-                fprintf(stderr, "Errore: File non regolare/stat fallita. Ignorato.\n");
-            }
-        }
-        i++;
-    }
-
     // TEST: --> OK
-    // printList(lista);
-
-    /*
-        Debug argomenti:
-        printf("-n: %ld, -q: %ld, -t: %ld, -d: %s", num_threads, q_length, r_time, dir_name);
-        printf("\n");
-        printList(head);
-    */
-    if (dir_name != NULL) {
-        // Controllo che dir sia una cartella regolare
-        if(is_regular_folder(dir_name) == 0) {
-            naviga_cartella(dir_name, lista);
-        } else {
-            fprintf(stderr, "Errore: cartella non regolare. Ignorato.\n");
-        }
-    }
-
-    
-
-        // TEST: --> OK
-        // printf("-n: %ld, -q: %ld, -t: %ld, -d: %s", num_threads, q_length, r_time, dir_name);
-        // printf("\n");
-        // printList(lista);
-
-        // printf("FINE TEST.\n");
-    
+    // printf("FINE TEST.\n");
     
     pid_t pid = fork();
     // Controllo se sono padre, figlio o se c'è stato un errore
@@ -292,7 +247,7 @@ int main (int argc, char *argv[]) {
     } else if(pid > 0) {
         // Sono il padre
         // Processo Master_Worker
-        int parent = farm_master(num_threads, q_length, r_time, lista);
+        int parent = farm_master(num_threads, q_length, r_time, dir_name, argc, argv, optind);
         if(parent != 0) {
             fprintf(stderr, "FATAL ERROR: processo master.\n");
             exit(EXIT_FAILURE);
@@ -311,7 +266,6 @@ int main (int argc, char *argv[]) {
     }
 
     // printf("Programma terminato correttamente.\n");
-    //deleteList(lista);
     
     return 0;
 }

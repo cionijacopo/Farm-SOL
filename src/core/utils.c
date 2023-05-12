@@ -1,6 +1,7 @@
 /*
     Created by Jacopo Cioni
     FarmProject - SOL
+    File sorgente contenente il funzionamento delle utils del progetto.
 */
 
 #include"../../includes/utils.h"

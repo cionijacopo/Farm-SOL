@@ -1,6 +1,7 @@
 /*
     Created by Jacopo Cioni
     FarmProject - SOL
+    File sorgente contenente il funzionamento della coda concorrente.
 */
 
 #include"../../includes/task_queue.h"
@@ -85,10 +86,7 @@ int pushPool(TaskQueue_t *lista, char *info) {
     // Copio infio
     strncpy(lista->coda[lista->pos], info, strlen(info)+1);
     // TEST: --> OK
-    // printf("Posizione inserimento: %d\n", lista->pos);
-    // printf("Dato inserito: %s\n", lista->coda[lista->pos]);  
     lista->pos = (lista->pos + 1) % lista->max_length;
-    // printf("Posizione post inserimento: %d\n", lista->pos);
 
     //Rilascio la lock
     UNLOCK(&(lista->qlock));
@@ -105,11 +103,6 @@ char *popPool(TaskQueue_t *lista) {
         return NULL;
     }
     // TEST: --> OK
-    //printf("Test.\n"); 
-    //printTaskQueue(lista);
-    //printf("------\n");   
-    // printf("Posizione: %d\n", lista->pos); 
-    // printf("Test: %s\n", lista->coda[lista->pos]); 
     // Puntatore al dato estratto 
     char *info;
     // Rimuovo l'elemento

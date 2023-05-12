@@ -1,3 +1,8 @@
+/*
+    Created by Jacopo Cioni
+    farmProject - SOL
+    Header contenente i metodi per la gestione dei threads. 
+*/
 #if !defined(THREADUTILS_H_)
 #define THREADUTILS_H_
 

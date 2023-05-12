@@ -1,11 +1,12 @@
 /*
     Created by Jacopo Cioni
     FarmProject - SOL
+    File sorgente che contiene i controlli sui file/cartelle e la navigazione della cartella.
 */
 
 #include"../../includes/isregular.h"
-#include"../../includes/linkedlist.h"
 #include"../../includes/utils.h"
+#include"../../includes/task_queue.h"
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -48,7 +49,7 @@ int is_regular_folder(char *folder_name) {
 }
 
 // stackoverflow code
-void naviga_cartella(char *folder_name, Node_t *lista) {
+void naviga_cartella(char *folder_name, TaskQueue_t *safe_queue) {
     DIR *cartella;
     if((cartella = opendir(folder_name)) == NULL) {
         fprintf(stderr, "FATAL ERROR: navigazione della directory.\n");
@@ -57,8 +58,8 @@ void naviga_cartella(char *folder_name, Node_t *lista) {
         char sub_cartella[MAX_PATH_LENGTH];
         errno = 0;
         struct dirent *file;
+        
         // Comincio ad iterare
-
         while((file = readdir(cartella)) != NULL && (errno == 0)) {
             if(strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0) {
                 continue;
@@ -67,11 +68,13 @@ void naviga_cartella(char *folder_name, Node_t *lista) {
                 strncat(sub_cartella, "/", 2);
                 strncat(sub_cartella, file->d_name, strlen(file->d_name)+1);
                 if(is_regular_folder(sub_cartella) == 0) {
-                    naviga_cartella(sub_cartella, lista);
+                    naviga_cartella(sub_cartella, safe_queue);
                 } else {
                     if(is_regular_file(sub_cartella) == 0) {
                         // Aggiungiere alla coda
-                        postInsert(lista, sub_cartella);
+                        if(pushPool(safe_queue, sub_cartella) == -1) {
+                            fprintf(stderr, "FATAL ERROR: inserimento elementi cartella nella pool.\n");
+                        }
                     }
                 }
             }

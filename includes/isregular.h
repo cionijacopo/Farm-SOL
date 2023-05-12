@@ -1,7 +1,14 @@
+/*
+    Created by Jacopo Cioni
+    farmProject - SOL
+    Header contenente i metodi per la verifica dei file/cartelle e per la navigazione della cartella.
+*/
+
 #if !defined(ISREGULAR_H_)
 #define ISREGULAR_H_
 
 #include"./linkedlist.h"
+#include"./task_queue.h" 
 
 #define MAX_PATH_LENGTH 4096
 
@@ -24,9 +31,9 @@ int is_regular_folder(char *folder_name);
 /**
 * @function naviga_cartella
 * @brief funzione ricorsiva che naviga la cartella passata come parametro ed aggiunge i file ad una lista
-* @param folder cartella che viene navigata
-* @param lista dove viene inserito il file
+* @param folder_name cartella che viene navigata
+* @param safe_queue dove viene inserito il file
 */
-void naviga_cartella(char *folder_name, Node_t *lista);
+void naviga_cartella(char *folder_name, TaskQueue_t *safe_queue);
 
 #endif

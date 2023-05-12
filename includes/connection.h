@@ -1,3 +1,9 @@
+/*
+    Created by Jacopo Cioni
+    farmProject - SOL
+    Header contenente i metodi per la connessione e scrittura/lettura sui socket
+*/
+
 #if !defined(CONNECTION_H_)
 #define CONNECTION_H_
 
@@ -7,23 +13,10 @@
 #define SOCKETNAME "./farm.sck"
  
 /**
- * @function initServerAddress
- * @brief funzione che inizializza il server sulla socket
-*/
-// void initServerAddress();
-
-/**
  * @function cleanup
  * @brief pulizia della SOCKETNAME
 */
 void cleanup();
-
-/**
- * @function serverSocket
- * @brief funzione che restituisce il file descriptor del server connesso ala socket
- * @return fd_server in caso di successo, -1 in caso di errore
-*/
-// int serverSocket();
 
 /**
  * @function clientSocket
@@ -31,14 +24,6 @@ void cleanup();
  * @return fd_client in caso di successo, -1 in caso di errore
 */
 int clientSocket();
-
-/**
- * @function accettaClient
- * @brief funzione accept
- * @param fd_socket server
- * @return fd_client file descriptor del client
-*/
-// int accettaClient(int fd_socket);
 
 /**
  * @function readn

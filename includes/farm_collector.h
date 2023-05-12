@@ -1,6 +1,7 @@
 /*
     Created by Jacopo Cioni
     FarmProject - SOL
+    Header contenente il metodo collector.
 */
 #if !defined(FARM_COLLECTOR_H_)
 #define FARM_COLLECTOR_H_

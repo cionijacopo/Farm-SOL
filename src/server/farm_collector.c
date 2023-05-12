@@ -1,6 +1,7 @@
 /*
     Created by Jacopo Cioni
     FarmProject - SOL
+    File sorgente contenente il funzionamento del collector.
 */
 
 #include"../../includes/farm_collector.h"
@@ -67,22 +68,10 @@ static int handler(int fd_client, int *termina, FinalNode_t *final_list, char st
     } else {
         // Aggiungo alla lista finale
         // Faccio prima la tokenizer 
-        //char *nome;
-        // long int ris;
         char *token = strtok(collector_buffer, "-");
         *ris = strtol(token, NULL, 10);
         token = strtok(NULL, "-");
         strncpy(string, token, strlen(token)+1);
-        // nome = token;
-        // Aggiungo il nodo
-        // printf("%ld %s\n", ris, nome);
-        //final_list = insertFinalNode(final_list, nome, ris);
-        // printFinalList(final_list);
-        //if(final_list == NULL) {
-        //    fprintf(stderr, "Errore inserimento nodo finale.\n");
-        //    close(fd_client);
-        //    return -1;
-        //}
         close(fd_client);
         return 0;
     }
@@ -98,10 +87,8 @@ int farm_collector() {
     cleanup();
     //Inizializzazione dell'indirizzo
     struct sockaddr_un socket_address;
-    // memset(&socket_address, '0', sizeof(socket_address));
     socket_address.sun_family = AF_UNIX;
     strncpy(socket_address.sun_path, SOCKETNAME, strlen(SOCKETNAME)+1);
-    // initServerAddress();
     // Inizializzazione del Socket
     if(serverSocket(&fd_socket, &socket_address) != 0) {
         // Errore inizializzazione del server
@@ -128,7 +115,6 @@ int farm_collector() {
             } 
             if(temp == 0){
                 // printf("Val: %ld - String: %s\n", ris, string);
-                // insertFinalNode(&final_list, string, ris);
                 //printf("---\nAggiungo: %s\n---\n", string);
                 final_list = orderInsert(final_list, string, ris);
             }

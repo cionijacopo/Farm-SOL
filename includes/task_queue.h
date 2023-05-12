@@ -1,3 +1,8 @@
+/*
+    Created by Jacopo Cioni
+    farmProject - SOL
+    Header contenente i metodi per la gestione della coda concorrente. 
+*/
 #if !defined(TASK_QUEUE_H_)
 #define TASK_QUEUE_H_
 
@@ -26,8 +31,9 @@ typedef struct taskqueue {
 /**
  * @function initQueue
  * @brief inizializza la coda dei task
- * @param safe_queue coda da inizializzare
- * @return 0 in caso di successo, -1 altrimenti 
+ * @param max_length lunghezza della coda
+ * @param r_time tempo di ritardo
+ * @return puntatore alla coda concorrente creata 
 */
 TaskQueue_t *initQueue(int max_length, int r_time);
 
@@ -36,7 +42,7 @@ TaskQueue_t *initQueue(int max_length, int r_time);
  * @brief permette l'inserimento di un nodo nella coda del pool
  * @param lista pool dove inserire un nodo
  * @param info informazione da inserire nella lista
- * @return 0 in caso di succeso, -1 in caso di errore (errno settato)
+ * @return 0 in caso di succeso, 1 in caso di uscita forzata, -1 in caso di errore (errno settato)
 */
 int pushPool(TaskQueue_t *lista, char *info);
 

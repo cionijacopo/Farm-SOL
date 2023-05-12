@@ -1,6 +1,7 @@
 /*
     Created by Jacopo Cioni
     FarmProject - SOL
+    File sorgente contenente il funzionamento dello worker.
 */
 
 #include"../../includes/pool.h"
@@ -99,8 +100,6 @@ void *workerFun(void *args) {
         snprintf(buf_msg, cifre+1, "%ld", ris);
         strncat(buf_msg, "-", 2);
         strncat(buf_msg, info, strlen(info));
-        // Calcolo la lunghezza della stringa
-        // int length = strlen(buf_msg); 
 
         fd_client = clientSocket();
         if(fd_client == -1){

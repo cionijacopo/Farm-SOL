@@ -1,3 +1,8 @@
+/*
+    Created by Jacopo Cioni
+    farmProject - SOL
+    Header contenente i metodi utils del progetto.
+*/
 #if !defined(UTILS_H_)
 #define UTILS_H_
 
@@ -5,8 +10,6 @@
 
 // Lunghezza massima della stringa passata come parametro
 #define MAX_ARGV_LENGTH 512
-// Lunghezza massima del path di una cartella
-// #define MAX_PATH_LENGHT 256
 // Valore di default per il numero di threads
 #define DEFAULT_NUM_THREADS 4
 // Valore di default per la lunghezza della coda
