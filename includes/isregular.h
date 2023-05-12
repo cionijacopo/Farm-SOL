@@ -3,6 +3,8 @@
 
 #include"./linkedlist.h"
 
+#define MAX_PATH_LENGTH 4096
+
 /**
  * @function is_regular_file
  * @brief La funzione controlla che il parametro sia un file.

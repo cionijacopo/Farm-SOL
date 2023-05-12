@@ -21,7 +21,7 @@ Node_t *newNode(char *info) {
     return ptr;
 }
 
-FinalNode_t *newFinalNode(char *info, long int ris) {
+FinalNode_t *newFinalNode(char info[], long int ris) {
     // Alloco lo spazio per il nodo
     FinalNode_t *ptr = (FinalNode_t *)s_malloc(sizeof(FinalNode_t));
     // Alloco lo spazio per la stringa
@@ -42,17 +42,18 @@ Node_t *postInsert(Node_t *lista, char *info) {
     return lista;
 }
 
-FinalNode_t *insertFinalNode(FinalNode_t *final_list, char *info, long int ris) {
-    if(final_list == NULL) {
-        return newFinalNode(info, ris);
+/*
+void insertFinalNode(FinalNode_t **final_list, char info[], long int ris) {
+    FinalNode_t *current = *final_list;
+    if(current == NULL) {
+        *final_list = newFinalNode(info, ris);
     } else {
-        FinalNode_t *current = final_list;
         FinalNode_t *new = newFinalNode(info, ris);
         // Controllo se lo devo inserire direttamente in testa
         if(current->ris >= new->ris) {
             new->next = current;
-            final_list = new;
-            return final_list;
+            *final_list = new;
+            return;
         }
         // Scorro fino a quando non trovo la posizione giusta
         while(current->next != NULL && current->next->ris <= new->ris) {
@@ -60,8 +61,20 @@ FinalNode_t *insertFinalNode(FinalNode_t *final_list, char *info, long int ris) 
         }
         new->next = current->next;
         current->next = new;
-        return final_list;
     }
+}
+*/
+
+FinalNode_t *orderInsert(FinalNode_t *final_list, char info[], long int ris) {
+    if(final_list == NULL || final_list->ris >= ris) {
+        FinalNode_t *temp = newFinalNode(info, ris);
+        temp->next = final_list;
+        final_list = temp;
+        return final_list;
+    } else {
+        final_list->next = orderInsert(final_list->next, info, ris);
+    }
+    return final_list;
 }
 
 Node_t *deleteList(Node_t *lista) {

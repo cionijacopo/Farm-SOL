@@ -13,6 +13,8 @@
 #include<errno.h>
 #include<sys/types.h>
 #include<sys/wait.h>
+#include<sys/socket.h>
+#include<sys/un.h>
 
 #include"../includes/utils.h"
 #include"../includes/linkedlist.h"
@@ -23,6 +25,7 @@
 #include"../includes/connection.h"
 
 volatile sig_atomic_t force = 0;
+struct sockaddr_un socket_add;
 
 static void interrupt(int signum) {
     force = 1;
@@ -46,15 +49,9 @@ static void *sigHandler(void *args) {
         switch(sig) {
             case SIGUSR1: {
                 int fd_farm = clientSocket();
-                int length = 6;
                 int n;
-                if((n = writen(fd_farm, &length, sizeof(int))) == -1) {
-                    fprintf(stderr, "Errore writen master.\n");
-                    return NULL;
-                }
-                if((n = writen(fd_farm, "SIGNAL", length*sizeof(char))) == -1) {
-                    fprintf(stderr, "Errore writen master.\n");
-                    return NULL;
+                if((n = writen(fd_farm, "SIGNAL", 6)) == -1) {
+                     fprintf(stderr, "Errore writen farm.\n");
                 }
                 close(fd_farm);
                 continue;
@@ -95,6 +92,9 @@ int main (int argc, char *argv[]) {
     long r_time;
     // Nome della directory
     char *dir_name = NULL;
+
+    socket_add.sun_family = AF_UNIX;
+    strncpy(socket_add.sun_path, SOCKETNAME, strlen(SOCKETNAME)+1);
     
     int opt;
     int n_counter = 0, q_counter = 0, d_counter = 0, t_counter = 0;
@@ -215,19 +215,19 @@ int main (int argc, char *argv[]) {
 
     // Se avvio il programma senza argomenti in input, setto tutti i valori di default.
     if(n_counter == 0) {
-        fprintf(stdout, "Utilizzo valore di default per '-n'.\n");
+        // fprintf(stdout, "Utilizzo valore di default per '-n'.\n");
         num_threads = DEFAULT_NUM_THREADS;
     }
     if(q_counter == 0) {
-        fprintf(stdout, "Utilizzo valore di default per '-q'.\n");
+        // fprintf(stdout, "Utilizzo valore di default per '-q'.\n");
         q_length = DEFAULT_QUEUE_LENGTH;
     }
     if(t_counter == 0) {
-        fprintf(stdout, "Utilizzo valore di default per '-t'.\n");
+        // fprintf(stdout, "Utilizzo valore di default per '-t'.\n");
         r_time = DEFAULT_DELAY_TIME;
     }
     if(d_counter == 0) {
-        fprintf(stdout, "Utilizzo valore di default per '-d'.\n");
+        // fprintf(stdout, "Utilizzo valore di default per '-d'.\n");
     }
 
     // Gestione della lista degli argomenti
@@ -269,6 +269,8 @@ int main (int argc, char *argv[]) {
         }
     }
 
+    
+
         // TEST: --> OK
         // printf("-n: %ld, -q: %ld, -t: %ld, -d: %s", num_threads, q_length, r_time, dir_name);
         // printf("\n");
@@ -308,6 +310,8 @@ int main (int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    // printf("Programma terminato correttamente.\n");
+    //deleteList(lista);
     
     return 0;
 }

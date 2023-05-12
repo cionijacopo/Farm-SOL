@@ -46,21 +46,28 @@ void *workerFun(void *args) {
 
     // Ciclo infinito
     for(;;) {
-        LOCK(&safe_queue->qlock);
+        LOCK(&(safe_queue->qlock));
         // Controllo la condizione di attesa, il consumatore deve verificare che la coda non sia vuota
         // Nel caso si mette in attesa
-        while(safe_queue->pos == 0) {
+        /*
+        if((safe_queue->pos) % safe_queue->max_length == safe_queue->tail && safe_queue->coda[safe_queue->pos] == NULL){
+            printf("[CONSUMATORE] --> Coda Vuota, non posso estrarre.\n");
+        } else {
+            printf("[CONSUMATORE] --> Coda con elementi, posso estrarre.\n"); 
+        }
+        */
+        while((safe_queue->pos) % safe_queue->max_length == safe_queue->tail && safe_queue->coda[safe_queue->pos] == NULL) {
             // Controllo che non sia attivo il flag di terminazione
             if(safe_queue->uscita != -1) {
-                UNLOCK(&safe_queue->qlock);
+                UNLOCK(&(safe_queue->qlock));
                 return (void *)0;
             }
-            WAIT(&safe_queue->vuoto, &safe_queue->qlock);
+            WAIT(&(safe_queue->vuoto), &(safe_queue->qlock));
         }
 
         // Controllo se sono nella fase di terminazione
-        if(safe_queue->pos == 0 && safe_queue->uscita != -1) {
-            UNLOCK(&safe_queue->qlock);
+        if(((safe_queue->pos % safe_queue->max_length) == safe_queue->tail && safe_queue->coda[safe_queue->pos] == NULL) && safe_queue->uscita != -1) {
+            UNLOCK(&(safe_queue->qlock));
             return (void *)0;
         }
         // TEST: --> OK
@@ -69,15 +76,14 @@ void *workerFun(void *args) {
         
         // La wait riprende la lock quando la condizione è verificata
         info = popPool(safe_queue);
-        printf("Dato estratto: %s \n", info);
-        // Dopo aver estratto invio il segnale 
-        SIGNAL(&safe_queue->pieno); 
+        //printf("\n---\nDato estratto: %s \n---\n", info);
+        
         // Rilascio la lock
-        UNLOCK(&safe_queue->qlock);
+        UNLOCK(&(safe_queue->qlock));
 
         // Lo worker procede con il calcolo del risultato
-        ris = workerResult(info);
-        printf("Risultato: %ld \n", ris); 
+        ris = workerResult(info); 
+        // printf("Risultato: %ld \n", ris); 
         // Cerco il numero di cifre in modo da allocare esattamente lo spazio necessario
         int cifre = 0;
         long int temp = ris;
@@ -94,7 +100,7 @@ void *workerFun(void *args) {
         strncat(buf_msg, "-", 2);
         strncat(buf_msg, info, strlen(info));
         // Calcolo la lunghezza della stringa
-        int length = strlen(buf_msg);
+        // int length = strlen(buf_msg); 
 
         fd_client = clientSocket();
         if(fd_client == -1){
@@ -102,11 +108,8 @@ void *workerFun(void *args) {
             break;
         }
         int n;
-        if((n = writen(fd_client, &length, sizeof(int))) == -1) {
-            fprintf(stderr, "Errore writen.\n");
-            break;
-        }
-        if((n = writen(fd_client, buf_msg, length*sizeof(char))) == -1) {
+        // printf("FD CLIENT: %d\n-----\n", fd_client); 
+        if((n = writen(fd_client, buf_msg, strlen(buf_msg))) == -1) {
             fprintf(stderr, "Errore writen.\n");
             break;
         }
@@ -120,4 +123,4 @@ void *workerFun(void *args) {
         sleep(safe_queue->r_time * 0.001);
     }
     return (void *)0;
-}
+} 

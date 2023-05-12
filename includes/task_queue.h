@@ -10,6 +10,8 @@ typedef struct taskqueue {
     int max_length;
     // Posizione
     int pos;
+    // Posizione precedente
+    int tail;
     // Lock della coda
     pthread_mutex_t qlock;
     // Conditions per la gestione del produttore/consumatore
@@ -45,7 +47,5 @@ int pushPool(TaskQueue_t *lista, char *info);
  * @return puntatore al dato estratto (errno settato)
 */
 char *popPool(TaskQueue_t *lista);
-
-void printTaskQueue(TaskQueue_t *lista);
 
 #endif

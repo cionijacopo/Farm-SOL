@@ -16,7 +16,7 @@
 #include<sys/types.h>
 #include<unistd.h>
 
-#define MAX_PATH_LENGTH 4096
+
 
 int is_regular_file(char *file) {
     struct stat pathbuf;
@@ -77,7 +77,7 @@ void naviga_cartella(char *folder_name, Node_t *lista) {
             }
         }
         if(errno != 0) {
-            fprintf(stderr, "Errore: readdir");
+            perror("Readdir");
         } else {
             closedir(cartella);
         }

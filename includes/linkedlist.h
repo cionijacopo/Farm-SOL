@@ -32,7 +32,7 @@ Node_t *newNode(char *info);
  * @param ris elemento del nodo
  * @return puntatore al nodo
 */
-FinalNode_t *newFinalNode(char *info, long int ris);
+FinalNode_t *newFinalNode(char info[], long int ris);
 
 /**
  * @function postInsert
@@ -51,7 +51,9 @@ Node_t *postInsert(Node_t *lista, char *info);
  * @param ris elemento del nodo
  * @return puntatore alla lista mdoficata
 */
-FinalNode_t *insertFinalNode(FinalNode_t *final_list, char *info, long int ris);
+void insertFinalNode(FinalNode_t **final_list, char info[], long int ris);
+
+FinalNode_t *orderInsert(FinalNode_t *FinalNode_t, char info[], long int ris);
 
 /**
  * @functio deleteList

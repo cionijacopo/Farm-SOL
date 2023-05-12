@@ -5,12 +5,12 @@
 
 #define MAX_BACK_LOG 32
 #define SOCKETNAME "./farm.sck"
-
+ 
 /**
  * @function initServerAddress
  * @brief funzione che inizializza il server sulla socket
 */
-void initServerAddress();
+// void initServerAddress();
 
 /**
  * @function cleanup
@@ -23,7 +23,7 @@ void cleanup();
  * @brief funzione che restituisce il file descriptor del server connesso ala socket
  * @return fd_server in caso di successo, -1 in caso di errore
 */
-int serverSocket();
+// int serverSocket();
 
 /**
  * @function clientSocket
@@ -38,7 +38,7 @@ int clientSocket();
  * @param fd_socket server
  * @return fd_client file descriptor del client
 */
-int accettaClient(int fd_socket);
+// int accettaClient(int fd_socket);
 
 /**
  * @function readn
